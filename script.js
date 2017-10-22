@@ -9,12 +9,14 @@ let div = d3.select("body").append("div")
             .attr("class", "tooltip")
 
 function numFormat(num) {
+    // Round and add comma to numbers for display
     return (+num).toLocaleString()
 }
 
 d3.queue()
     .defer(d3.json, mapUrl)
     .defer(d3.csv, dataUrl, (d) => {
+        // Add data to map for mapping to topojson in the future
         map.set(d.combined_fips, {
             winPercent: d.per_gop - d.per_dem,
             countyName: d.county_name,
@@ -32,6 +34,7 @@ d3.queue()
                 let dataPoint = map.get(parseInt(d.id))
                 dataPoint = dataPoint ? dataPoint.winPercent : 0.05
 
+                // Base county colors on win % per county
                 if (dataPoint >= 0.05) return '#f44336'
                 if (dataPoint > 0) return '#ef9a9a'
                 if (dataPoint >= -0.05) return '#bbdefb'
@@ -39,6 +42,7 @@ d3.queue()
             })
             .attr("d", path)
             .on("mouseover", (d) => {
+                // add tooltip on hover with information about the race
                 d = map.get(parseInt(d.id))
                 div.transition()
                     .duration(200)
@@ -57,6 +61,7 @@ d3.queue()
                     .style("top", (d3.event.pageY - 28) + "px")
             })
 
+        // Fill in the county outlines
         svg.append("path")
             .datum(topojson.meshus, us.objects.states, (a, b) => {
                 return a !== b
