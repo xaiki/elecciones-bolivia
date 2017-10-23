@@ -15,3 +15,12 @@ This map matches the election result data to a topojson using D3. It does have t
 * JavaScript
 * D3.js
 * Data set from [here](https://github.com/tonmcg/County_Level_Election_Results_12-16)
+
+## Deployment
+Site is deployed at aspittel.github.io/election-map/
+
+## Local Installation
+```bash
+$ git clone https://github.com/aspittel/election-map/
+$ hs
+```
