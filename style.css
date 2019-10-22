@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:400,500,700,900');
-.counties :hover {
+.geo-feature :hover {
     opacity: 0.2;
 }
 
@@ -8,7 +8,7 @@ h1 {
     font-size: 40px;
 }
 
-.county-borders {
+.geo-borders {
     fill: none;
     stroke: white;
     stroke-width: 0.5px;
@@ -19,9 +19,10 @@ h1 {
 
 div.tooltip {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     text-align: center;
     width: 150px;
-    height: 70px;
     padding: 2px;
     font-size: 12px;
     background: white;
@@ -34,4 +35,28 @@ div.tooltip {
 html {
     text-align: center;
     font-family: 'Roboto', sans-serif;
+}
+
+body {
+    margin: 0
+}
+
+svg {
+    background: #eee;
+}
+
+.sphere {
+    fill: #fff;
+}
+
+.land {
+    fill: #000;
+}
+
+.boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
 }
