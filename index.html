@@ -5,11 +5,23 @@
     <title>Election Map</title>
   </head>
   <body>
-    <h1>2016 Presidential Election Map</h1>
-    <svg width="960" height="600"></svg>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-    <script src="https://d3js.org/topojson.v2.min.js"></script>
-    <script src="script.js"></script>
+      <h1>Elecciones Presidenciales Bolivianas 2019</h1>
+      <div id="content">
+          <div id="map"></div>
+          <div id="dashboard"></div>
+          <div class="row align-items-center">
+              <div class="col-sm-2"><p id="value-step"></p></div>
+              <div class="col-sm"><div id="slider-step"></div></div>
+          </div>
+      </div>
+
+      <script src="//d3js.org/d3.v5.min.js"></script>
+      <script src="//unpkg.com/topojson@3"></script>
+      <script src="//d3js.org/d3-scale-chromatic.v1.min.js"></script>
+      <script src="//unpkg.com/d3-simple-slider"></script>
+      
+      <script src="dashboard.js"></script>
+      <script src="map.js"></script>
+      <script src="script.js"></script>
   </body>
 </html>
