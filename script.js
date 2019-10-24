@@ -1,18 +1,40 @@
+const views = ['Departamento', 'Municipio', 'País']
 const dataPoints = ['2019.10.20.19.40.57', '2019.10.22.13.41.53']
-const dataTypes = ['municipios', 'departamento', 'pais']
-const dataURL = (type, point) => `./data/${type}.${point}.csv`
+const dataPointsUrl = './data/datapoints.csv'
+const dataURL = (type, point) => `./data/${type}/${type}-acta.${point}.xlsx.csv`
+const dataTypes = views.reduce((a, c) => Object.assign({}, a, {
+    [c]: c.toLowerCase().replace(/í/, 'i')
+}), {})
+
+
+const colors = {
+    'CC': "#e96629",
+    'MTS': "#6B8D28",
+    'MAS - IPSP': "#124eA0",
+    'PAN-BOL': "#F817e2",
+    'PDC': "#156166",
+    '21F': "#E01737",
+    'UCS': "#26749B",
+    'MNR': "#D8BAD8",
+    'FPV': "#aaa",
+    'Blancos': "#fff"
+}
 
 const elections = {}
-const load = Promise.all(dataPoints.map(p => {
-    elections[p] = {}
+const load = d3
+    .json(dataPointsUrl)
+    .then(dataPoints => {
+        Promise.all(dataPoints.map(p => {
+            elections[p] = {}
 
-    return Promise.all(dataTypes.map(t =>
-        d3.csv(dataURL(t, p))
-          .then(data => {
-              elections[p][t] = data
-          })
-    ))
-}))
+            return Promise.all(Object.values(dataTypes).map(t =>
+                d3.csv(dataURL(t, p))
+                  .then(data => {
+                      elections[p][t] = data
+                  })
+            ))
+        }))
+    }
 
 class State extends EventTarget {
     constructor(state) {
@@ -32,38 +54,17 @@ window.State = State
 
 load.then(() => {
     const state = new State({
-        dataPoint: '2019.10.20.19.40.57',
-        elections: elections
+        elections,
+        dataPoints,
+        dataTypes,
+        views,
+        colors,
+        dataPoint: dataPoints[0],
+        view: views[0]
     })
-
-
-    var sliderStep = d3
-        .sliderBottom()
-        .min(0)
-        .max(dataPoints.length - 1)
-        .width(300)
-        .tickFormat(d => dataPoints[d])
-        .ticks(dataPoints.length - 1)
-        .step(1)
-        .on('onchange', val => {
-            const dataPoint = dataPoints[val]
-            d3.select('p#value-step').text(dataPoint);
-            state.setState({dataPoint})
-        });
-
-    var gStep = d3
-        .select('div#slider-step')
-        .append('svg')
-        .attr('width', 500)
-        .attr('height', 100)
-        .append('g')
-        .attr('transform', 'translate(30,30)');
-
-    gStep.call(sliderStep);
-
-    d3.select('p#value-step').text(dataPoints[sliderStep.value()]);
 
     map('#map', state)
     dashboard('#dashboard', state)
+    sliders('#sliders', state)
 })
 

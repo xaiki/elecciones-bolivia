@@ -1,6 +1,5 @@
 function dashboard(id, parentState) {
-    const dataName = 'Departamento'
-
+    let dataName
     const state = new State({
         region: null,
         party: null
@@ -10,19 +9,7 @@ function dashboard(id, parentState) {
     const piechart = PieChart(state)
     const legend = Legend(state)
 
-    const colors = {
-        CC: "#e96629",
-        MTS: "#6B8D28",
-        'MAS - IPSP': "#124eA0",
-        'PAN-BOL': "#F817e2",
-        PDC: "#156166",
-        '21F': "#E01737",
-        UCS: "#26749B",
-        MNR: "#D8BAD8",
-        FPV: "#aaa",
-        Blancos: "#fff"
-    }
-
+    const {elections, colors} = parentState.get()
     const fields = Object.keys(colors)
 
     state.addEventListener('state:changed', handleState);
@@ -53,9 +40,10 @@ function dashboard(id, parentState) {
     }
 
     function handleParentState(e) {
-        const {elections, dataPoint} = parentState.get()
-        const fData = elections[dataPoint][dataName.toLowerCase()]
-        console.error(elections, dataPoint)
+        const {dataTypes, dataPoint, view} = parentState.get()
+        dataName = view
+        const fData = elections[dataPoint][dataTypes[view]]
+        console.error(elections, dataPoint, view)
 
         state.setState({fData})
     }

@@ -46,4 +46,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for f in args.filename:
+        if f == '-': f = sys.stdin
         process(f, args.field, args.only)

@@ -61,10 +61,21 @@ svg {
     vector-effect: non-scaling-stroke;
 }
 
+g.bolivia path {
+    stroke-width: 0.1px;
+}
+
+#sliders {
+    display: flex;
+}
+#sliders div {
+    flex: 1;
+}
+
 #dashboard {
     position: absolute;
     right: 0;
-    top: 20vh;
+    top: 30vh;
     width: 50vw;
 }
 
