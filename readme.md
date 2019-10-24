@@ -1,26 +1,37 @@
 # Election Results
 
 ## Motivation
-My motivation for this project was to show D3 on my portfolio! I've used it quite a bit professionally, but I haven't used it much outside of work!
+Elections come around and there is no easy tool to visualize result. I've
+tried as hard as possible to stay generic and make everything modular, but
+data is hard.
 
-## Code Style
-I stick to standard.js for JavaScript.
+this project was originally forked from
+https://github.com/aspittel/election-map/ but most of it was now rewritten.
 
-## Features
-This map matches the election result data to a topojson using D3. It does have tooltips built in.
+## Bolivia 2019
+I'm using this project to map out results as they are uplodade to
+https://trep.oep.gob.bo and https://computo.oep.gob.bo, ideally i'd like to
+show variance and projections visualisations with historical data.
 
-## Stack
-* HTML5
-* CSS
-* JavaScript
-* D3.js
-* Data set from [here](https://github.com/tonmcg/County_Level_Election_Results_12-16)
+### Bolivia workflow
+i get the xlxs files from the OEP website, then i run this little script on them
+```sh
+#!/bin/sh
+set -x
 
-## Deployment
-Site is deployed at aspittel.github.io/election-map/
-
-## Local Installation
-```bash
-$ git clone https://github.com/aspittel/election-map/
-$ hs
+RUNNER="python3 ../../main.py"
+files=`ls *.xlsx`
+mkdir -p pais municipio departamento
+for i in $files; do
+        xlsx2csv $i > $i.csv
+        $RUNNER $i.csv --field 'País' > pais/pais-$i.csv
+        $RUNNER $i.csv --field 'Departamento' --only "País=Bolivia" > departamento/departamento-$i.csv
+        $RUNNER $i.csv --field 'Municipio' --only "País=Bolivia" > municipio/municipio-$i.csv
+        rm -rf $i.csv
+done
 ```
+
+## main.py
+this very poorly named tool could be a great companion for you, it'll take
+csv data and allow you to filter/agregate by diferent fields, it's really
+written only to slove my problem today but, patches are welcome
