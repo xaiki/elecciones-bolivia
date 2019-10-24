@@ -50,7 +50,7 @@ function map(el, state) {
     }
 
     const loadMundo = () =>
-        d3.json('./data/mundo_A3.topo.json')
+        d3.json('./data/mundo.topo.json')
           .then(world => {
               console.error('world', world)
               g.append('path')
@@ -59,7 +59,7 @@ function map(el, state) {
                      .attr('d', path);
 
               g.append('path')
-               .datum(topojson.merge(world, world.objects.mundo_A3.geometries))
+               .datum(topojson.merge(world, world.objects.mundo.geometries))
                .attr('class', 'land')
                .attr('d', path);
           })
