@@ -31,6 +31,11 @@ for i in $files; do
 done
 ```
 
+## data
+the data folder is volunterly left out of this repo so that i don't clutter
+developement with data updates. that said you should probably still be able
+to grab it from https://xaiki.net/~xaiki/elecciones or some of it's subdirs
+
 ## main.py
 this very poorly named tool could be a great companion for you, it'll take
 csv data and allow you to filter/agregate by diferent fields, it's really
