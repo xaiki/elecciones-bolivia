@@ -1,5 +1,8 @@
 function dashboard(id, parentState) {
     let dataName
+    const {elections, colors} = parentState.get()
+    const fields = Object.keys(colors)
+
     const state = new State({
         region: null,
         party: null
@@ -9,12 +12,12 @@ function dashboard(id, parentState) {
     const piechart = PieChart(state)
     const legend = Legend(state)
 
-    const {elections, colors} = parentState.get()
-    const fields = Object.keys(colors)
 
     state.addEventListener('state:changed', handleState);
     function handleState() {
         const {party, region, color, fData} = state.get()
+
+        if (!fData) return // still loading
 
         console.error(party, region, color)
         if (party) {

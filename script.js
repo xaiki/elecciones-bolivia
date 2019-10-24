@@ -1,6 +1,5 @@
 const views = ['Departamento', 'Municipio', 'País']
-const dataPoints = ['2019.10.20.19.40.57', '2019.10.22.13.41.53']
-const dataPointsUrl = './data/datapoints.csv'
+const dataPointsUrl = './data/datapoints.json'
 const dataURL = (type, point) => `./data/${type}/${type}-acta.${point}.xlsx.csv`
 const dataTypes = views.reduce((a, c) => Object.assign({}, a, {
     [c]: c.toLowerCase().replace(/í/, 'i')
@@ -23,27 +22,26 @@ const colors = {
 const elections = {}
 const load = d3
     .json(dataPointsUrl)
-    .then(dataPoints => {
-        Promise.all(dataPoints.map(p => {
-            elections[p] = {}
-
-            return Promise.all(Object.values(dataTypes).map(t =>
-                d3.csv(dataURL(t, p))
-                  .then(data => {
-                      elections[p][t] = data
-                  })
-            ))
-        }))
-    }
 
 class State extends EventTarget {
-    constructor(state) {
+    constructor(state, setters = {}) {
         super()
-        this.state = state
+        this.state = {}
+        this.setters = setters
+
+        this.setState(state)
     }
     setState(newState) {
-        this.state = Object.assign({}, this.state, newState)
-        this.dispatchEvent(new Event('state:changed'))
+        const stateUpdates = Promise.all(
+            Object.keys(newState)
+                  .filter(k => this.setters[k])
+                  .map(s => this.setters[s](newState, this.state)))
+
+        return stateUpdates.then(newStates => {
+            this.state = Object.assign.apply(
+                this, [{}, this.state, ...newStates, newState])
+            this.dispatchEvent(new Event('state:changed'))
+        })
     }
     get() {
         return this.state
@@ -52,19 +50,37 @@ class State extends EventTarget {
 
 window.State = State
 
-load.then(() => {
+load.then((dataPoints) => {
     const state = new State({
         elections,
         dataPoints,
         dataTypes,
         views,
-        colors,
-        dataPoint: dataPoints[0],
-        view: views[0]
+        colors
+    }, {
+        dataPoint: ({dataPoint}, state) => {
+            console.error('setting state.dataPoint, trigguered an update')
+            const elections = state.elections || {}
+            if (elections[dataPoint]) return Promise.resolve({})
+
+            elections[dataPoint] = {}
+            return Promise.all(Object.values(dataTypes).map(t =>
+                d3.csv(dataURL(t, dataPoint))
+                  .then(data => {
+                      elections[dataPoint][t] = data
+                  })
+            )).then(() => ({elections}))
+        }
     })
 
-    map('#map', state)
-    dashboard('#dashboard', state)
-    sliders('#sliders', state)
+    state.setState({
+        dataPoint: dataPoints[0],
+        view: views[0]
+    }).then(() => {
+        console.error('state', state)
+        map('#map', state)
+        dashboard('#dashboard', state)
+        sliders('#sliders', state)
+    })
 })
 
