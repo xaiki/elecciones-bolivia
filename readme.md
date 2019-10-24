@@ -1,4 +1,5 @@
 # Election Results
+![all gory ugly](./screenshot.png "early screenshot")
 
 ## Motivation
 Elections come around and there is no easy tool to visualize result. I've
